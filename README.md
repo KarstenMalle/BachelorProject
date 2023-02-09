@@ -4,10 +4,32 @@ Website for Digital Twin as a Service (DTaaS) software. This software shall be u
 
 This is a mono repo containing code for both the client (web browser) and server code.
 
+## Before Installing the Environment
+
+Give Linux user sudo privileges, on start up hold shift.
+Select the second option, "Advanced options for Ubuntu".
+Again select the second option, "Ubuntu, with Linux 5.15.0-60-generic (recovery mode)".
+On the "Recovery Menu" select "root" and enter your password.
+Use the following:
+```bash
+usermod -aG sudo <username>
+exit
+```
+Now select "resume".
+Once you're back on the desktop check if your user has sudo privileges:
+```bash
+groups <username>
+```
+Now log in to git using cmd line:
+```bash
+git config --global user.name "your_username"
+git config --global user.email "your_email_address@example.com"
+```
+
 ## Install the Environment
 
 ```bash
-bash script/install.bash
+sudo bash script/install.bash
 ```
 
 ---
