@@ -10,20 +10,20 @@ Give Linux user sudo privileges, if your user already has sudo privileges you ca
 
 1. On start up hold shift. <br />
 2. Select the second option, "Advanced options for Ubuntu". <br />
-3. Again select the second option, "Ubuntu, with Linux 5.15.0-60-generic (recovery mode)". <br />
+3. Select the second option, "Ubuntu, with Linux 5.15.0-60-generic (recovery mode)". <br />
 4. On the "Recovery Menu" select "root" and enter your password. <br />
 5. Use the following:
 ```bash
 usermod -aG sudo <username>
 exit
 ```
-6. Now select "resume". <br />
+6. Select "resume". <br />
 
 Optional: Once you're back on the desktop check if your user has sudo privileges:
 ```bash
 groups <username>
 ```
-Now log in to git using cmd line:
+8. Log in to git using cmd line:
 ```bash
 git config --global user.name "your_username"
 git config --global user.email "your_email_address@example.com"
