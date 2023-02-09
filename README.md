@@ -7,17 +7,19 @@ This is a mono repo containing code for both the client (web browser) and server
 ## Before Installing the Environment
 
 Give Linux user sudo privileges, if your user already has sudo privileges you can skip this step. <br />
-On start up hold shift. <br />
-Select the second option, "Advanced options for Ubuntu". <br />
-Again select the second option, "Ubuntu, with Linux 5.15.0-60-generic (recovery mode)". <br />
-On the "Recovery Menu" select "root" and enter your password. <br />
-Use the following:
+
+1. On start up hold shift. <br />
+2. Select the second option, "Advanced options for Ubuntu". <br />
+3. Again select the second option, "Ubuntu, with Linux 5.15.0-60-generic (recovery mode)". <br />
+4. On the "Recovery Menu" select "root" and enter your password. <br />
+5. Use the following:
 ```bash
 usermod -aG sudo <username>
 exit
 ```
-Now select "resume". <br />
-Once you're back on the desktop check if your user has sudo privileges:
+6. Now select "resume". <br />
+
+Optional: Once you're back on the desktop check if your user has sudo privileges:
 ```bash
 groups <username>
 ```
