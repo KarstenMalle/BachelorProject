@@ -3,6 +3,9 @@ src: https://github.com/mui/material-ui/blob/v5.10.0/docs/data/material/getting-
 */
 
 import * as React from 'react';
+import { useEffect } from 'react';
+import { ApolloClient, InMemoryCache, gql } from '@apollo/client';
+// import { gql } from 'apollo-server';
 /*
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
@@ -22,11 +25,55 @@ import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
 import Footer from '../../page/Footer';
 */
 const APPLICATION_ID = 'f05709a4c29009cc4bb443c2d13bcd4d9f457107495c5ebae5af8e8a1bed774d';
-const REDIRECT_URI = 'http://localhost:4000/dashboard/';
+const APPLICATION_SECRET = 'e85ae3fb2e7b72d5f709ae2a0753e89e6ddd2beab9042150a0deb8880b1ab489';
+const INIT_REDIRECT_URI = 'http://localhost:4000/';
+const REDIRECT_URI = 'http://localhost:4000/dashboard';
 const REQUESTED_SCOPES = 'read_user+profile';
+
+const client = new ApolloClient({
+  uri: 'https://gitlab.com/api/graphql',
+  cache: new InMemoryCache(),
+});
+
+// let REQUEST_ACCESS_TOKEN_MUTATION = '';
+
 function App() {
+  useEffect(() => {
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    if (urlParams.get('code') != null) {
+      const codeParam = urlParams.get('code');
+      const code = codeParam;
+      const GET_TOKEN = gql`
+        mutation GetToken($code: String!) {
+          token: access_token(
+            grant_type: "authorization_code",
+            client_id: ${APPLICATION_ID},
+            client_secret: "${APPLICATION_SECRET},
+            code: $code,
+            redirect_uri: ${REDIRECT_URI}
+          ) {
+            access_token
+          }
+        }
+      `;
+      client
+        .mutate({
+          mutation: GET_TOKEN,
+          variables: { code },
+        })
+        .then((result) => {
+          const token = result.data.token.access_token;
+          console.log(token);
+        });
+      console.log('TESTING: ', codeParam);
+      console.log('TESTING2: ', GET_TOKEN);
+    } else {
+      console.log('LOGIN');
+    }
+  }, []);
   function loginWithGitlab() {
-    window.location.assign(`https://gitlab.com/oauth/authorize?client_id=${APPLICATION_ID}&redirect_uri=${REDIRECT_URI}&response_type=code&scope=${REQUESTED_SCOPES}`);
+    window.location.assign(`https://gitlab.com/oauth/authorize?client_id=${APPLICATION_ID}&redirect_uri=${INIT_REDIRECT_URI}&response_type=code&scope=${REQUESTED_SCOPES}`);
   }
   return (
     /* jshint ignore:start */
@@ -40,7 +87,7 @@ function App() {
     /* jshint ignore:end */
   );
 }
-
+// <button onClick={LoginCallback}>Request Access Token</button>
 export default App;
 /*
 const drawerWidth = 240;
