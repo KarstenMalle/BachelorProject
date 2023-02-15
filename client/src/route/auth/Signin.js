@@ -42,16 +42,15 @@ function App() {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     if (urlParams.get('code') != null) {
-      const codeParam = urlParams.get('code');
-      const code = codeParam;
+      const code = urlParams.get('code');
       const GET_TOKEN = gql`
         mutation GetToken($code: String!) {
-          token: access_token(
+          accessToken: access_token(
             grant_type: "authorization_code",
-            client_id: ${APPLICATION_ID},
-            client_secret: ${APPLICATION_SECRET},
+            client_id: "${APPLICATION_ID}",
+            client_secret: "${APPLICATION_SECRET}",
             code: $code,
-            redirect_uri: ${REDIRECT_URI}
+            redirect_uri: "${REDIRECT_URI}"
           ) {
             access_token
           }
@@ -66,7 +65,6 @@ function App() {
           const token = result.data.token.access_token;
           console.log(token);
         });
-      console.log('TESTING: ', codeParam);
       console.log('TESTING2: ', GET_TOKEN);
     } else {
       console.log('LOGIN');
