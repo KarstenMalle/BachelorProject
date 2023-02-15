@@ -3,6 +3,7 @@ src: https://github.com/mui/material-ui/blob/v5.10.0/docs/data/material/getting-
 */
 
 import * as React from 'react';
+/*
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -19,7 +20,29 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
 import Footer from '../../page/Footer';
+*/
+const APPLICATION_ID = 'f05709a4c29009cc4bb443c2d13bcd4d9f457107495c5ebae5af8e8a1bed774d';
+const REDIRECT_URI = 'http://localhost:4000/dashboard/';
+const REQUESTED_SCOPES = 'read_user+profile';
+function App() {
+  function loginWithGitlab() {
+    window.location.assign(`https://gitlab.com/oauth/authorize?client_id=${APPLICATION_ID}&redirect_uri=${REDIRECT_URI}&response_type=code&scope=${REQUESTED_SCOPES}`);
+  }
+  return (
+    /* jshint ignore:start */
+    <div className='App'>
+      <header className='App-header'>
+        <button onClick={loginWithGitlab}>
+          Login with Gitlab
+        </button>
+      </header>
+    </div>
+    /* jshint ignore:end */
+  );
+}
 
+export default App;
+/*
 const drawerWidth = 240;
 
 const AppBar = styled(MuiAppBar, {
@@ -50,6 +73,7 @@ export default function SignIn() {
 
   return (
     /* jshint ignore:start */
+/*
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
@@ -136,5 +160,7 @@ export default function SignIn() {
       </Container>
     </ThemeProvider>
     /* jshint ignore:end */
+/*
   );
 }
+*/

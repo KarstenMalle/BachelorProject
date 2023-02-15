@@ -62,3 +62,4 @@ npx playwright install-deps
 echo "\n\n Install jupyter toolchain"
 apt install -y python3-pip
 sudo -H pip install jupyterlab
+

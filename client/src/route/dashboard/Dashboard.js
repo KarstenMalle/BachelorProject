@@ -8,6 +8,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
+import { useEffect } from 'react';
 import Chart from '../history/Chart';
 import RecentRuns from '../history/RecentRuns';
 import Footer from '../../page/Footer';
@@ -16,6 +17,12 @@ import DTaaSMenu from '../../page/Menu';
 const mdTheme = createTheme();
 
 function DashboardContent() {
+  useEffect(() => {
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const codeParam = urlParams.get('code');
+    console.log('TESTING: ', codeParam);
+  }, []);
   return (
     /* jshint ignore:start */
     <ThemeProvider theme={mdTheme}>
