@@ -49,7 +49,7 @@ function App() {
           token: access_token(
             grant_type: "authorization_code",
             client_id: ${APPLICATION_ID},
-            client_secret: "${APPLICATION_SECRET},
+            client_secret: ${APPLICATION_SECRET},
             code: $code,
             redirect_uri: ${REDIRECT_URI}
           ) {
