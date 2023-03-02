@@ -23,12 +23,6 @@ Optional: Once you're back on the desktop check if your user has sudo privileges
 ```bash
 groups <username>
 ```
-7. Log in to git using cmd line:
-```bash
-git config --global user.name "your_username"
-git config --global user.email "your_email_address@example.com"
-```
-
 ## Install the Environment
 
 ```bash

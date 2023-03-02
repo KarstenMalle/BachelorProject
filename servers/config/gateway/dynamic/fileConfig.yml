@@ -6,6 +6,7 @@ http:
       rule: 'Host(`localhost`)'
       middlewares:
         - basic-auth
+        - auth
       service: dtaas
 
     user1:
@@ -14,6 +15,7 @@ http:
       rule: 'Host(`localhost`) && PathPrefix(`/user/1`)'
       middlewares:
         - basic-auth
+        - auth
       service: user1
 
     host1lab:
@@ -22,6 +24,7 @@ http:
       rule: 'Host(`localhost`) && PathPrefix(`/host/1/lab`)'
       middlewares:
         - basic-auth
+        - auth
       service: host1lab
 
     host1lib:
@@ -30,6 +33,7 @@ http:
       rule: 'Host(`localhost`) && PathPrefix(`/host/1/lib`)'
       middlewares:
         - basic-auth
+        - auth
       service: host1lib
 
 
@@ -38,7 +42,16 @@ http:
     basic-auth:
       basicAuth:
         usersFile: "/etc/traefik/auth"
-
+    
+  middlewares:
+    auth:
+      forwardAuth:
+        address: "http://localhost:4000/oauth2/auth"
+        authResponseHeaders:
+          - "X-Forwarded-User"
+        trustForwardHeader: true
+        forwardedHeaderName: "X-Forwarded-For"
+        whitelistDomains:
 
   services:
     dtaas:
