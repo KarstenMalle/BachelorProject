@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 import { useEffect } from 'react';
+import { DateTime } from "luxon";
 
 // Used to get authCode from url
 export function getCodeParam(): string | null {
@@ -27,48 +28,48 @@ export function getGitLabAccessCode(
 
 // Used to get access token from authCode
 export async function getGitLabAccessToken(
-    clientId: string | undefined,
-    clientSecret: string | undefined,
-    redirectUri: string | undefined,
-    authCode: string | undefined
-): Promise<[string, string, number] | null> {
-    try {
-        // Request access token using authorization code
-        if (clientId !== undefined && clientSecret !== undefined && redirectUri !== undefined && authCode !== undefined) {
-            const response = await fetch('https://gitlab.com/oauth/token', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: new URLSearchParams({
-                    grant_type: 'authorization_code',
-                    client_id: clientId,
-                    client_secret: clientSecret,
-                    redirect_uri: redirectUri,
-                    code: authCode,
-                }),
-            });
+  clientId: string | undefined,
+  clientSecret: string | undefined,
+  redirectUri: string | undefined,
+  authCode: string | undefined
+): Promise<void> {
+  try {
+      // Request access token using authorization code
+      if (clientId !== undefined && clientSecret !== undefined && redirectUri !== undefined && authCode !== undefined) {
+          const response = await fetch('https://gitlab.com/oauth/token', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/x-www-form-urlencoded',
+              },
+              body: new URLSearchParams({
+                  grant_type: 'authorization_code',
+                  client_id: clientId,
+                  client_secret: clientSecret,
+                  redirect_uri: redirectUri,
+                  code: authCode,
+              }),
+          });
 
-            if (!response.ok) {
-                throw new Error(`Error fetching access token: ${response.statusText}`);
-            }
+          if (!response.ok) {
+              throw new Error(`Error fetching access token: ${response.statusText}`);
+          }
 
-            const data = await response.json();
-            const accessToken = data.access_token;
-            const refreshToken = data.refresh_token;
-            const expiresIn = data.expires_in;
+          const data = await response.json();
+          const accessToken = data.access_token;
+          const refreshToken = data.refresh_token;
+          const expiresIn = data.expires_in;
 
-            localStorage.setItem('accessToken', accessToken);
-            localStorage.setItem('refreshToken', refreshToken);
-            expiresAtDate(expiresIn);
-        }
-        throw new Error('Invalid parameters');
-
-    } catch (error) {
-        console.error(error);
-        return null;
-    }
+          localStorage.setItem('accessToken', accessToken);
+          localStorage.setItem('refreshToken', refreshToken);
+          expiresAtDate(expiresIn);
+      } else {
+          throw new Error('Invalid parameters');
+      }
+  } catch (error) {
+      console.error(error);
+  }
 }
+
 
 interface GitLabData {
     data: {
@@ -104,60 +105,47 @@ interface GitLabData {
       return null;
     }
   }
+
+  export function expiresAtDate(tokenExpiresAt: number): void {
+    // Get the current time
+    const currentTime = DateTime.now();
   
-
-export function expiresAtDate(tokenExpiresAt: number): void {
-    // Get the current time in milliseconds
-    const currentTimeMs = Date.now();
-
-    // Convert the current time to seconds
-    const currentTimeSec = Math.floor(currentTimeMs / 1000);
-
-    const expiresAtSec = currentTimeSec + tokenExpiresAt;
-    // Convert the seconds back to a Date object
-    const currentDate = new Date(expiresAtSec * 1000);
-
+    // Add the token expiration time to the current time
+    const expirationTime = currentTime.plus({ seconds: tokenExpiresAt });
+  
     // Format the date as a string
-    const currentDateStr = currentDate.toLocaleString();
-
-    // Store results
-    localStorage.setItem('expiresIn', currentDateStr);
-}
-
-// Our timestamp needs to be in EU format and not NA. 
-function convertDate(dateString: string): string {
-    const date = new Date(dateString);
-    const day = date.getDate().toString().padStart(2, '0');
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const year = date.getFullYear().toString();
-    const hours = date.getHours().toString().padStart(2, '0');
-    const minutes = date.getMinutes().toString().padStart(2, '0');
-    const seconds = date.getSeconds().toString().padStart(2, '0');
-    return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+    const expirationTimeStr = expirationTime.toISO();
+  
+    // Store the expiration time
+    localStorage.setItem('expiresIn', expirationTimeStr);
   }
   
+  export const checkTokenValidity = (): boolean => {
+    const expirationTimeStr = localStorage.getItem('expiresIn');
   
-
-export const checkTokenValidity = (): boolean => {
-    if (localStorage.getItem('expiresIn')) {
-        const storedData = localStorage.getItem('expiresIn');
-        const dateEUFormat = convertDate(storedData as string);
-        console.log('test: ', dateEUFormat);
-        const dateObject = new Date(dateEUFormat);
-        const currentTime = new Date();
-        console.log('Current time: ', currentTime, 'Expires at: ', dateObject);
-        if (dateObject > currentTime) {
-            console.log('Token valid!');
-            return true;
-        } 
-        if (dateObject <= currentTime)
-        {
-            console.log('Token invalid!');
-            return false; 
-        }
+    if (expirationTimeStr) {
+      // Parse the expiration time from the stored string
+      const expirationTime = DateTime.fromISO(expirationTimeStr);
+  
+      // Get the current time
+      const currentTime = DateTime.now();
+  
+      console.log('Current time:', currentTime.toISO());
+      console.log('Expiration time:', expirationTime.toISO());
+  
+      // Check if the expiration time has passed
+      if (expirationTime > currentTime) {
+        console.log('Token valid!');
+        return true;
+      } 
+      console.log('Token invalid!');
+      return false;
     }
+  
+    console.log('No expiration time found!');
     return false;
-};
+  };
+  
 
 
 export const callOncePerRender = (callback: () => void) => {

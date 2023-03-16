@@ -45,10 +45,36 @@ function DashboardContent() {
     }
     if (localStorage.getItem('accessToken') === null) {
       if (codeParam) {
-        console.log('No accesToken so we request one');
-        getGitLabAccessToken(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, codeParam);
+        console.log('No accessToken so we request one');
+        getGitLabAccessToken(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, codeParam)
+          .then(() => {
+            if (localStorage.getItem('accessToken')) {
+              fetchGitLabGraphQLQuery(localStorage.getItem('accessToken'), `
+              {
+                currentUser {
+                  id
+                  name
+                  username
+                  email
+                }
+              }
+              `).then((data) => {
+                console.log('Current user: ', data?.data?.currentUser.name);
+              }).catch((error) => {
+                console.error(error);
+              });
+            }
+            else {
+              console.log('Token not valid, request new token');
+              resetToken(CLIENT_ID, CLIENT_SECRET);
+            }
+          })
+          .catch((error) => {
+            console.error(error);
+          });
       }
     }
+    
   }, []);
 
   return (
