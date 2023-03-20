@@ -5,71 +5,75 @@ http:
         - http
       rule: 'Host(`localhost`)'
       middlewares:
-        - basic-auth
-        - auth
+        - oauth2TokenIntrospection
+        - addPrefix
       service: dtaas
-
+    root:
+      entryPoints:
+        - http
+      rule: 'Host(`localhost`) && Path(`/`)'
+      service: dtaas
     user1:
       entryPoints:
         - http
       rule: 'Host(`localhost`) && PathPrefix(`/user/1`)'
       middlewares:
-        - basic-auth
-        - auth
+        - oauth2TokenIntrospection
+        - addPrefix
       service: user1
-
     host1lab:
       entryPoints:
         - http
       rule: 'Host(`localhost`) && PathPrefix(`/host/1/lab`)'
       middlewares:
-        - basic-auth
-        - auth
+        - oauth2TokenIntrospection
+        - addPrefix
       service: host1lab
-
     host1lib:
       entryPoints:
         - http
       rule: 'Host(`localhost`) && PathPrefix(`/host/1/lib`)'
       middlewares:
-        - basic-auth
-        - auth
+        - oauth2TokenIntrospection
+        - addPrefix
       service: host1lib
-
-
-  # Middleware: Basic authentication
+  # Middleware: OAuth2 authentication with GitLab
   middlewares:
-    basic-auth:
+    gitlab-auth:
       basicAuth:
-        usersFile: "/etc/traefik/auth"
-    
-  middlewares:
-    auth:
-      forwardAuth:
-        address: "http://localhost:4000/oauth2/auth"
-        authResponseHeaders:
-          - "X-Forwarded-User"
-        trustForwardHeader: true
-        forwardedHeaderName: "X-Forwarded-For"
-        whitelistDomains:
-
+        users:
+          - "admin:$apr1$BS9rs9CI$6kd91hXw/v3pIaO9xaZ3Y1"
+    addPrefix:
+      addPrefix:
+        prefix: "X-User-Name:"
+  serversTransports:
+    insecure:
+      insecureSkipVerify: true
+  servers:
+    myserver:
+      url: http://your-gitlab-instance.com
+  auth:
+    gitlab:
+      clientID: f05709a4c29009cc4bb443c2d13bcd4d9f457107495c5ebae5af8e8a1bed774d
+      clientSecret: dd6412781504b99616d536aa40ceebd98a9ffd9e660c2ca54e013717e77738d0
+      scopes:
+        - api
+        - read_user
   services:
     dtaas:
       loadBalancer:
         servers:
           - url: "http://localhost:4000"
-
     user1:
       loadBalancer:
         servers:
           - url: "http://localhost:8090"
-
     host1lab:
       loadBalancer:
         servers:
           - url: "http://localhost:8091"
-
     host1lib:
       loadBalancer:
         servers:
           - url: "http://localhost:8092"
+

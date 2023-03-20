@@ -50,7 +50,7 @@ import '../../css/style.css'
 // }));
 
 const CLIENT_ID = process.env.REACT_APP_CLIENT_ID;
-const REDIRECT_URI = process.env.REACT_APP_REDIRECT_URI;
+const REDIRECT_URL = process.env.REACT_APP_REDIRECT_URL;
 const REQUESTED_SCOPES = process.env.REACT_APP_REQUESTED_SCOPES;
 
 const theme: Theme = createTheme();
@@ -95,7 +95,7 @@ function SignIn() {
             onClick={() => getGitLabAccessCode(
               CLIENT_ID,
               REQUESTED_SCOPES,
-              REDIRECT_URI,
+              REDIRECT_URL,
             )}
           >
             <a href="#" className="gitlabButton">

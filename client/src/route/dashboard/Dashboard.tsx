@@ -15,7 +15,7 @@ import RecentRuns from '../history/RecentRuns';
 
 const CLIENT_ID = process.env.REACT_APP_CLIENT_ID;
 const CLIENT_SECRET = process.env.REACT_APP_CLIENT_SECRET;
-const REDIRECT_URI = process.env.REACT_APP_REDIRECT_URI;
+const REDIRECT_URL = process.env.REACT_APP_REDIRECT_URL;
 // const REQUESTED_SCOPES = process.env.REACT_APP_REQUESTED_SCOPES;
 
 function DashboardContent() {
@@ -46,7 +46,7 @@ function DashboardContent() {
     if (localStorage.getItem('accessToken') === null) {
       if (codeParam) {
         console.log('No accessToken so we request one');
-        getGitLabAccessToken(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, codeParam)
+        getGitLabAccessToken(CLIENT_ID, CLIENT_SECRET, REDIRECT_URL, codeParam)
           .then(() => {
             if (localStorage.getItem('accessToken')) {
               fetchGitLabGraphQLQuery(localStorage.getItem('accessToken'), `
