@@ -203,6 +203,26 @@ export async function resetToken(CLIENT_ID?: string, CLIENT_SECRET?: string): Pr
       console.error(`Error refreshing access token: ${error}`);
       throw error;
     }
+}
+
+  export async function fetchProtectedApi(url: string): Promise<Response> {
+    const accessToken = localStorage.getItem('accessToken');
+  
+    if (!accessToken) {
+      throw new Error('Access token not found');
+    }
+  
+    const response = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+  
+    if (!response.ok) {
+      throw new Error(`Request failed: ${response.statusText}`);
+    }
+  
+    return response;
   }
   
 

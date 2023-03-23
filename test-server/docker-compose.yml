@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  traefik:
+    image: traefik:v2.5.7
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+    ports:
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  microservice:
+    build: ./microservice
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.microservice.rule=Host(`microservice.local`) && PathPrefix(`/`)"
+      - "traefik.http.routers.microservice.entrypoints=web"
+      - "traefik.http.routers.microservice.service=microservice-svc"
+      - "traefik.http.services.microservice-svc.loadbalancer.server.port=3000"
+      - "traefik.http.routers.microservice-test.rule=Host(`microservice.local`) && PathPrefix(`/test`)"
+      - "traefik.http.routers.microservice-test.entrypoints=web"
+      - "traefik.http.routers.microservice-test.service=microservice-svc"

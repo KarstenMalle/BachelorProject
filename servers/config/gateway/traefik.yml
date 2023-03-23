@@ -19,36 +19,3 @@ api:
 log:
   level: DEBUG
 
-# Middleware: OAuth2 authentication with GitLab
-middlewares:
-  oauth:
-    introspection:
-      address: "http://localhost:8080/oauth2/introspect"
-      requireToken: true
-    forwardAuth:
-      address: "http://localhost:4000/oauth2/auth"
-      authResponseHeaders: ["X-Forwarded-User"]
-      authHost: "gitlab.com"
-      authPath: "/oauth/authorize"
-      tokenPath: "/oauth/token"
-      clientID: "f05709a4c29009cc4bb443c2d13bcd4d9f457107495c5ebae5af8e8a1bed774d"
-      clientSecret: "dd6412781504b99616d536aa40ceebd98a9ffd9e660c2ca54e013717e77738d0"
-      scopes: ["read_user"]
-      redirectURL: "https://localhost/oauth2/callback"
-
-# Router: example protected service
-routers:
-  protected:
-    entryPoints:
-      - http
-    rule: 'Host(`example.com`) && PathPrefix(`/protected`)'
-    middlewares:
-      - oauth
-    service: protected-service
-
-# Service: example protected service
-services:
-  protected-service:
-    loadBalancer:
-      servers:
-        - url: "http://localhost:3000"

@@ -7,7 +7,7 @@ import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 
 import { useEffect } from 'react';
-import { getCodeParam, getGitLabAccessToken, checkTokenValidity, fetchGitLabGraphQLQuery, resetToken } from 'components/authFunc';
+import { getCodeParam, getGitLabAccessToken, checkTokenValidity, fetchGitLabGraphQLQuery, resetToken, fetchProtectedApi } from 'components/authFunc';
 
 import Chart from '../history/Chart';
 import RecentRuns from '../history/RecentRuns';
@@ -33,10 +33,20 @@ function DashboardContent() {
           }
         }
       `).then((data) => {
-          console.log('Current user: ', data?.data?.currentUser.name);
+          console.log('Current user: ', data?.data?.currentUser.name, data?.data?.currentUser.username);
         }).catch((error) => {
           console.error(error);
         });
+        const fetchData = async () => {
+          try {
+            const response = await fetchProtectedApi('http://localhost:8090/auth');
+            const data = await response.json();
+            console.log('RESPONSE FROM MICROSERVICE: ', data)
+          } catch (error) {
+            console.error('Error fetching protected API:', error);
+          }
+        };
+        fetchData();
       }
       else {
         console.log('Token not valid, request new token');

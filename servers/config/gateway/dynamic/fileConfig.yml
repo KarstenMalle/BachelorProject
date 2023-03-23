@@ -5,8 +5,7 @@ http:
         - http
       rule: 'Host(`localhost`)'
       middlewares:
-        - oauth2TokenIntrospection
-        - addPrefix
+        - oauth2
       service: dtaas
     root:
       entryPoints:
@@ -18,47 +17,30 @@ http:
         - http
       rule: 'Host(`localhost`) && PathPrefix(`/user/1`)'
       middlewares:
-        - oauth2TokenIntrospection
-        - addPrefix
+        - oauth2
       service: user1
     host1lab:
       entryPoints:
         - http
       rule: 'Host(`localhost`) && PathPrefix(`/host/1/lab`)'
       middlewares:
-        - oauth2TokenIntrospection
-        - addPrefix
+        - oauth2
       service: host1lab
     host1lib:
       entryPoints:
         - http
       rule: 'Host(`localhost`) && PathPrefix(`/host/1/lib`)'
       middlewares:
-        - oauth2TokenIntrospection
-        - addPrefix
+        - oauth2
       service: host1lib
   # Middleware: OAuth2 authentication with GitLab
   middlewares:
-    gitlab-auth:
-      basicAuth:
-        users:
-          - "admin:$apr1$BS9rs9CI$6kd91hXw/v3pIaO9xaZ3Y1"
-    addPrefix:
-      addPrefix:
-        prefix: "X-User-Name:"
-  serversTransports:
-    insecure:
-      insecureSkipVerify: true
-  servers:
-    myserver:
-      url: http://your-gitlab-instance.com
-  auth:
-    gitlab:
-      clientID: f05709a4c29009cc4bb443c2d13bcd4d9f457107495c5ebae5af8e8a1bed774d
-      clientSecret: dd6412781504b99616d536aa40ceebd98a9ffd9e660c2ca54e013717e77738d0
-      scopes:
-        - api
-        - read_user
+    oauth2:
+      forwardAuth:
+        address: "http://localhost:8090/auth"
+        authResponseHeaders:
+          - "X-Forwarded-User"
+        trustForwardHeader: true
   services:
     dtaas:
       loadBalancer:
